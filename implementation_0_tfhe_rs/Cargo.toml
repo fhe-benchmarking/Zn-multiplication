@@ -16,12 +16,6 @@ name = "half_cipher_cipher_64"
 name = "half_cipher_cleartext_64"
 
 [[bin]]
-name = "full_cipher_cipher_64"
-
-[[bin]]
-name = "full_cipher_cleartext_64"
-
-[[bin]]
 name = "run_gen_keys"
 
 [[bin]]
