@@ -36,13 +36,12 @@ python3 ./harness/run_submission.py {0,1,2,3}
 
 ### Cleartext implementation
 
-The directory `cleartext_impl` contains a cleartext implementation of the half and full 64-bits multipliers in C. It does not run any operations on encrypted data, and is only meant to be used to check the correctness of other implementations.
+The directory `cleartext_impl` contains a cleartext implementation of the half 64-bits multipliers in C. It does not run any operations on encrypted data, and is only meant to be used to check the correctness of other implementations.
 
-It defines two functions (in `cleartext_impl/src/include/mul_cleartext.h`), for the half and full 64-bits multipliers:
+It defines one function (in `cleartext_impl/src/include/mul_cleartext.h`), for the half 64-bits multiplier:
 
 ```c
 uint64_t half_64b_mul(const uint64_t lhs, const uint64_t rhs);
-uint128_t full_64b_mul(const uint64_t lhs, const uint64_t rhs);
 ```
 
 
@@ -76,5 +75,3 @@ The following results were obtained on an Intel(R) Core(TM) i7-9700K CPU @ 3.60G
 | :------------------------: | :-----------------------: | :---------: |
 | `half_cipher_cleartext_64` |            100            |     140     |
 |  `half_cipher_cipher_64`   |            100            |     570     |
-| `full_cipher_cleartext_64` |            100            |     670     |
-|  `full_cipher_cipher_64`   |            100            |    1,450    |
