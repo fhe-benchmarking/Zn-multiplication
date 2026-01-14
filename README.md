@@ -32,20 +32,7 @@ The test harness can be run for implementation 0 (using the [TFHE-rs](https://do
 python3 ./harness/run_submission.py {0,1,2,3}
 ```
 
-## Structure of the repository
-
-### Cleartext implementation
-
-The directory `cleartext_impl` contains a cleartext implementation of the half 64-bits multipliers in C. It does not run any operations on encrypted data, and is only meant to be used to check the correctness of other implementations.
-
-It defines one function (in `cleartext_impl/src/include/mul_cleartext.h`), for the half 64-bits multiplier:
-
-```c
-uint64_t half_64b_mul(const uint64_t lhs, const uint64_t rhs);
-```
-
-
-### Reference homomorphic implementation
+## Reference homomorphic implementation
 
 The reference implementation can be found in `implementation_0_tfhe_rs`. It uses the [tfhe-rs](https://github.com/zama-ai/tfhe-rs) library.
 
