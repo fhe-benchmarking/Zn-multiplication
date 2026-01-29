@@ -64,16 +64,19 @@ def main() -> int:
     cmd = [exec_dir/"run_gen_keys", test]
     subprocess.run(cmd, check=True)
     utils.log_step(2, "Key generation")
+    utils.log_size(io_dir / "public_keys", "Public and evaluation keys")
 
     # 3. Client side: Encode and encrypt the dataset
     cmd = [exec_dir/"encode_encrypt", test]
     subprocess.run(cmd, check=True)
     utils.log_step(3, "Encryption")
+    utils.log_size(io_dir / "ciphertexts_upload", "Client: encrypted inputs")
 
     # 4. Server side: Run the encrypted processing
     cmd = [exec_dir/"run_h_mul", test, str(SIZE_BOUND[size])]
     subprocess.run(cmd, check=True)
     utils.log_step(4, "Homomorphic mul")
+    utils.log_size(io_dir / "ciphertexts_download", "Client: encrypted results")
 
     # 5. Client side: Decrypt
     cmd = [exec_dir/"decrypt_decode", test, str(SIZE_BOUND[size])]
