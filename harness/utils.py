@@ -110,17 +110,14 @@ def log_step(step_num: int, step_name: str, start: bool = False):
 def log_size(path: Path, object_name: str, flag: bool = False, previous: int = 0):
     global _bandwidth
     
-    # Check if the path points to at least one file before trying to calculate size
-    if not [n for n in glob(str(path)) if Path(n).is_file()]:
-        print(f"         [harness] Warning: {object_name} path does point to any file: {path}")
+    # Check if the path exists before trying to calculate size
+    if not path.exists():
+        print(f"         [harness] Warning: {object_name} path does not exist: {path}")
         _bandwidth[object_name] = "0B"
         return 0
-   
-    size = sum(map(int, 
-                   subprocess.run(["du", "-sb", *glob(str(path))], check=True, 
-                                  capture_output=True, text=True)
-                             .stdout.split()[::2]))
     
+    size = int(subprocess.run(["du", "-sb", path], check=True,
+                           capture_output=True, text=True).stdout.split()[0])
     if(flag):
         size -= previous
     
