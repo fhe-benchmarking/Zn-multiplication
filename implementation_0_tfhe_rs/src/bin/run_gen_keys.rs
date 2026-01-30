@@ -1,4 +1,4 @@
-// Copyright (c) 2025 HomomorphicEncryption.org
+// Copyright (c) 2026 HomomorphicEncryption.org
 // All rights reserved.
 //
 // This software is licensed under the terms of the Apache v2 License.
@@ -23,11 +23,13 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Serialize and save the secret key
     let serialised_data = bincode::serialize(&client_key)?;
-    fs::write(io_dir.clone() + "/sk.bin", &serialised_data)?;
+    fs::create_dir(io_dir.clone() + "/private_keys")?;
+    fs::write(io_dir.clone() + "/private_keys/sk.bin", &serialised_data)?;
     
     // Serialize and save the public key
     let serialised_data = bincode::serialize(&server_key)?;
-    fs::write(io_dir.clone() + "/pk.bin", &serialised_data)?;
+    fs::create_dir(io_dir.clone() + "/public_keys")?;
+    fs::write(io_dir.clone() + "/public_keys/pk.bin", &serialised_data)?;
 
     Ok(())
 }

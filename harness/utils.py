@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2025 HomomorphicEncryption.org
+# Copyright (c) 2026 HomomorphicEncryption.org
 # All rights reserved.
 #
 # This software is licensed under the terms of the Apache v2 License.
@@ -9,6 +9,7 @@
 import argparse
 import json
 import subprocess
+from glob import glob
 from datetime import datetime
 from params import InstanceParams, TOY, LARGE
 from pathlib import Path
@@ -23,6 +24,21 @@ _timestampsStr = {}
 _bandwidth = {}
 
 SUBMISSION_NAME = 'implementation_0_tfhe_rs'
+
+class TextFormat:
+    BOLD = "\033[1m"
+    GREEN = "\033[32m"
+    YELLOW = "\033[33m"
+    BLUE = "\033[34m"
+    RED = "\033[31m"
+    RESET = "\033[0m"
+
+def human_readable_size(n: int):
+    for unit in ["B","K","M","G","T"]:
+        if n < 1024:
+            return f"{n:.1f}{unit}"
+        n /= 1024
+    return f"{n:.1f}P"
 
 def parse_submission_arguments(workload: str) -> Tuple[int, InstanceParams, int, int, int]:
     """
@@ -87,10 +103,28 @@ def log_step(step_num: int, step_name: str, start: bool = False):
     _last_timestamp = now
 
     if (not start):
-        print(f"{timestamp} [harness] {step_num}: {step_name} completed{elapsed_str}")
+        print(f"{TextFormat.BLUE}{timestamp} [harness] {step_num}: {step_name} completed{elapsed_str}{TextFormat.RESET}")
         _timestampsStr[step_name] = f"{round(elapsed_seconds, 4)}s"
         _timestamps[step_name] = elapsed_seconds
 
+def log_size(path: Path, object_name: str, flag: bool = False, previous: int = 0):
+    global _bandwidth
+    
+    # Check if the path exists before trying to calculate size
+    if not path.exists():
+        print(f"         [harness] Warning: {object_name} path does not exist: {path}")
+        _bandwidth[object_name] = "0B"
+        return 0
+    
+    size = int(subprocess.run(["du", "-sb", path], check=True,
+                           capture_output=True, text=True).stdout.split()[0])
+    if(flag):
+        size -= previous
+    
+    print(f"{TextFormat.YELLOW}         [harness] {object_name} size: {human_readable_size(size)}{TextFormat.RESET}")
+
+    _bandwidth[object_name] = human_readable_size(size)
+    return size
 
 def save_run(path: Path):
     global _timestamps

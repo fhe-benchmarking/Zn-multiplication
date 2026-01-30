@@ -1,4 +1,4 @@
-// Copyright (c) 2025 HomomorphicEncryption.org
+// Copyright (c) 2026 HomomorphicEncryption.org
 // All rights reserved.
 //
 // This software is licensed under the terms of the Apache v2 License.
@@ -23,7 +23,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     let io_dir = "io/".to_owned() + &size;
 
     // Load the secret key
-    let serialised_data = fs::read(io_dir.clone() + "/sk.bin")?;
+    let serialised_data = fs::read(io_dir.clone() + "/private_keys/sk.bin")?;
     let lwe_sk: ClientKey = bincode::deserialize(&serialised_data)?;
 
     // Load the input data (LHS and RHS)
@@ -34,8 +34,9 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     let lhs_ciphers = lhs_cleartext.into_iter().map(|m| FheUint64::encrypt(m, &lwe_sk));
  
     // Write the LHS
+    fs::create_dir(io_dir.clone() + "/ciphertexts_upload")?;
     for (i, cipher) in lhs_ciphers.enumerate() {
-        fs::write(io_dir.clone() + "/cipher_lhs_" + &i.to_string() + ".bin", &bincode::serialize(&cipher)?)?
+        fs::write(io_dir.clone() + "/ciphertexts_upload/cipher_lhs_" + &i.to_string() + ".bin", &bincode::serialize(&cipher)?)?
     }
     
     // Encode and encrypt the RHS
@@ -43,7 +44,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Write the RHS
     for (i, cipher) in rhs_ciphers.enumerate() {
-        fs::write(io_dir.clone() + "/cipher_rhs_" + &i.to_string() + ".bin", &bincode::serialize(&cipher)?)?
+        fs::write(io_dir.clone() + "/ciphertexts_upload/cipher_rhs_" + &i.to_string() + ".bin", &bincode::serialize(&cipher)?)?
     }
 
     Ok(())

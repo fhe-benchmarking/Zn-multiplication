@@ -1,4 +1,4 @@
-// Copyright (c) 2025 HomomorphicEncryption.org
+// Copyright (c) 2026 HomomorphicEncryption.org
 // All rights reserved.
 //
 // This software is licensed under the terms of the Apache v2 License.

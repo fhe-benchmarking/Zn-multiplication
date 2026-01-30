@@ -1,4 +1,4 @@
-// Copyright (c) 2025 HomomorphicEncryption.org
+// Copyright (c) 2026 HomomorphicEncryption.org
 // All rights reserved.
 //
 // This software is licensed under the terms of the Apache v2 License.
@@ -23,18 +23,18 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     let io_dir = "io/".to_owned() + &size;
 
     // Load the server key
-    let serialised_data = fs::read(io_dir.clone() + "/pk.bin")?;
+    let serialised_data = fs::read(io_dir.clone() + "/public_keys/pk.bin")?;
     let server_key: ServerKey = bincode::deserialize(&serialised_data)?;
     set_server_key(server_key);
     
     // Load the LHS input ciphers
     let ciphers_lhs = (0 .. data_size).map(|i|
-        bincode::deserialize::<FheUint64>(&fs::read(io_dir.clone() + "/cipher_lhs_" + &i.to_string() + ".bin")?)
+        bincode::deserialize::<FheUint64>(&fs::read(io_dir.clone() + "/ciphertexts_upload/cipher_lhs_" + &i.to_string() + ".bin")?)
     ).collect::<Result<Vec<FheUint64>, Box<bincode::ErrorKind>>>()?;
     
     // Load the RHS input ciphers
     let ciphers_rhs = (0 .. data_size).map(|i|
-        bincode::deserialize::<FheUint64>(&fs::read(io_dir.clone() + "/cipher_rhs_" + &i.to_string() + ".bin")?)
+        bincode::deserialize::<FheUint64>(&fs::read(io_dir.clone() + "/ciphertexts_upload/cipher_rhs_" + &i.to_string() + ".bin")?)
     ).collect::<Result<Vec<FheUint64>, Box<bincode::ErrorKind>>>()?;
 
     // Run the homomorphic multiplications
@@ -43,8 +43,9 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
                                  .collect::<Vec<FheUint64>>();
 
     // Write the results
+    fs::create_dir(io_dir.clone() + "/ciphertexts_download")?;
     for (i, cipher) in ciphers_out.iter().enumerate() {
-        fs::write(io_dir.clone() + "/cipher_out_" + &i.to_string() + ".bin", &bincode::serialize(&cipher)?)?
+        fs::write(io_dir.clone() + "/ciphertexts_download/cipher_out_" + &i.to_string() + ".bin", &bincode::serialize(&cipher)?)?
     }
 
     Ok(())
