@@ -40,9 +40,9 @@ def main() -> int:
     print("Executable built")
 
     # The harness scripts are in the 'harness' directory,
-    # the executables are in the directory implementation_0_tfhe_rs/target/release
+    # the executables are in the directory submission/target/release
     harness_dir = params.rootdir/"harness"
-    exec_dir = params.rootdir/"implementation_0_tfhe_rs"/"target"/"release"
+    exec_dir = params.rootdir/"submission"/"target"/"release"
 
     # Remove and re-create IO directory
     io_dir = params.iodir()
