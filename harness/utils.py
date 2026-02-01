@@ -23,7 +23,7 @@ _timestampsStr = {}
 # Global variable to store measured sizes
 _bandwidth = {}
 
-SUBMISSION_NAME = 'implementation_0_tfhe_rs'
+SUBMISSION_NAME = 'submission'
 
 class TextFormat:
     BOLD = "\033[1m"

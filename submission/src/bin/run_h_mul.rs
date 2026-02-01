@@ -9,7 +9,7 @@ use std::fs;
 
 use tfhe::{ FheUint64, set_server_key, ServerKey };
 
-use implementation_0_tfhe_rs::half_cipher_cipher_mul_64;
+use zn_multiplication::half_cipher_cipher_mul_64;
 
 pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Get the number of inputs from the first argument

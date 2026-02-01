@@ -15,5 +15,5 @@ else
 fi
 
 # Build he submission
-cd implementation_0_tfhe_rs
+cd submission
 cargo build --release

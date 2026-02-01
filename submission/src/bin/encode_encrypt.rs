@@ -10,7 +10,7 @@ use std::fs;
 use tfhe::{ClientKey, FheUint64};
 use tfhe::prelude::*;
 
-use implementation_0_tfhe_rs::utils::*;
+use zn_multiplication::utils::*;
 
 
 pub fn main() -> Result<(), Box<dyn std::error::Error>> {
