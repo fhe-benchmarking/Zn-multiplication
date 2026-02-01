@@ -31,13 +31,11 @@ def main():
     rhs = numpy.random.randint(2**64, size=params.size_bound, dtype=numpy.uint64)
     numpy.savetxt(DATASET_RHS_PATH, rhs, fmt='%d')
 
-    if clrtxt:
+    # 2) compute reference result
+    result = lhs * rhs
 
-        # 2) compute reference result
-        result = lhs * rhs
-
-        # 3) write to expected.txt (overwrites if it already exists)
-        numpy.savetxt(OUT_PATH, result, fmt='%d')
+    # 3) write to expected.txt (overwrites if it already exists)
+    numpy.savetxt(OUT_PATH, result, fmt='%d')
 
 if __name__ == "__main__":
     main()

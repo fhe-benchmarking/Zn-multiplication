@@ -11,7 +11,7 @@ import json
 import subprocess
 from glob import glob
 from datetime import datetime
-from params import InstanceParams, TOY, LARGE
+from params import InstanceParams, SINGLE, LARGE
 from pathlib import Path
 from typing import Tuple
 
@@ -46,8 +46,8 @@ def parse_submission_arguments(workload: str) -> Tuple[int, InstanceParams, int,
     """
     # Parse arguments using argparse
     parser = argparse.ArgumentParser(description=workload)
-    parser.add_argument('size', type=int, choices=range(TOY, LARGE+1),
-                        help='Instance size (0-toy/1-small/2-medium/3-large)')
+    parser.add_argument('size', type=int, choices=range(SINGLE, LARGE+1),
+                        help='Instance size (0-single/1-small/2-medium/3-large)')
     parser.add_argument('--num_runs', type=int, default=1,
                         help='Number of times to run steps 4-9 (default: 1)')
     parser.add_argument('--seed', type=int,

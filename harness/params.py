@@ -13,19 +13,19 @@ params.py - Parameters and directory structure for the submission.
 from pathlib import Path
 
 # Enum for benchmark size
-TOY = 0
+SINGLE = 0
 SMALL = 1
 MEDIUM = 2
 LARGE = 3
         
-# parameters for sizes: toy, small, medium, large
-SIZE_BOUND = [10, 1000, 100000, 10000000]
+# parameters for sizes: single, small, medium, large
+SIZE_BOUND = [1, 1000, 100000, 10000000]
 
 def instance_name(size):
     """Return the string name of the instance size."""
     if size > LARGE:
         return "unknown"
-    names = ["toy", "small", "medium", "large"]
+    names = ["single", "small", "medium", "large"]
     return names[size]
 
 class InstanceParams:
