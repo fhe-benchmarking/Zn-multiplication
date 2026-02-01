@@ -1,6 +1,10 @@
+# Build artefacts
 datasets
-harness/__pycache__
-io
-implementation_0_tfhe_rs/Cargo.lock
-implementation_0_tfhe_rs/target
 measurements
+io
+harness/__pycache__
+submission/Cargo.lock
+submission/target
+
+# Virtual environments
+bmenv

@@ -83,12 +83,11 @@ def main() -> int:
     subprocess.run(cmd, check=True)
     utils.log_step(5, "Decryption")
 
-    # 6. Client side: Check the results
-    if clrtxt:
-        expected = numpy.loadtxt("datasets/" + test + "/expected.txt")
-        out = numpy.loadtxt("io/" + test + "/out.txt")
-        assert (expected == out).all()
-        utils.log_step(6, "Checking results")
+    # 6. Harness: Check the results
+    expected = numpy.loadtxt("datasets/" + test + "/expected.txt")
+    out = numpy.loadtxt("io/" + test + "/cleartext_output/out.txt")
+    assert (expected == out).all()
+    utils.log_step(6, "Checking results")
 
     # 7. Store measurements
     run_path = params.measuredir() / "results.json"
