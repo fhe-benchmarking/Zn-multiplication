@@ -28,8 +28,8 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     let lwe_sk: ClientKey = bincode::deserialize(&serialised_data)?;
 
     // Load the input data (LHS and RHS)
-    let lhs_cleartext: Vec<u64> = read_numbers_from_file(&Path::new(&("datasets/".to_owned() + &size + "/lhs.txt")))?;
-    let rhs_cleartext: Vec<u64> = read_numbers_from_file(&Path::new(&("datasets/".to_owned() + &size + "/rhs.txt")))?;
+    let lhs_cleartext: Vec<u64> = read_numbers_from_file(Path::new(&("datasets/".to_owned() + &size + "/lhs.txt")))?;
+    let rhs_cleartext: Vec<u64> = read_numbers_from_file(Path::new(&("datasets/".to_owned() + &size + "/rhs.txt")))?;
     
     // Encode and encrypt the LHS
     let lhs_ciphers = lhs_cleartext.into_iter().map(|m| FheUint64::encrypt(m, &lwe_sk));

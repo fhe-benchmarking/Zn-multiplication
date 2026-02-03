@@ -42,7 +42,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     if !Path::new(&cleartext_output_dir).exists() {
         fs::create_dir(cleartext_output_dir.clone())?;
     }
-    write_numbers_to_file(&Path::new(&(cleartext_output_dir.clone() + "/out.txt")), &results)?;
+    write_numbers_to_file(Path::new(&(cleartext_output_dir.clone() + "/out.txt")), &results)?;
 
     Ok(())
 }
