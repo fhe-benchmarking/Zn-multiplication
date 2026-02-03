@@ -13,7 +13,7 @@ rand = { version = "0.9.1" }
 name = "client_key_generation"
 
 [[bin]]
-name = "encode_encrypt"
+name = "client_encode_encrypt_input"
 
 [[bin]]
 name = "run_h_mul"

@@ -67,7 +67,7 @@ def main() -> int:
     utils.log_size(io_dir / "public_keys", "Public and evaluation keys")
 
     # 3. Client side: Encode and encrypt the dataset
-    cmd = [exec_dir/"encode_encrypt", test]
+    cmd = [exec_dir/"client_encode_encrypt_input", test]
     subprocess.run(cmd, check=True)
     utils.log_step(3, "Encryption")
     utils.log_size(io_dir / "ciphertexts_upload", "Client: encrypted inputs")
