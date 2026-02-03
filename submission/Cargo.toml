@@ -19,4 +19,4 @@ name = "client_encode_encrypt_input"
 name = "server_encrypted_compute"
 
 [[bin]]
-name = "decrypt_decode"
+name = "client_decrypt_decode"

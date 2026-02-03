@@ -138,7 +138,7 @@ Each file can take as argument the test case size.
 | `client_preprocess_input`        | (Optional) Any in the clear computations the client wants to apply over the input.
 | `client_encode_encrypt_input`    | Plaintext encoding and encryption of the input.
 | `server_encrypted_compute`       | The computation the server applies to achieve the workload solution over encrypted data.
-| `decrypt_decode`                 | Decryption and plaintext decoding of the result at the client.
+| `client_decrypt_decode`          | Decryption and plaintext decoding of the result at the client.
 | `client_postprocess`             | Any in the clear computation that the client wants to apply on the decrypted result.
 
 

@@ -85,7 +85,7 @@ def main() -> int:
         utils.log_size(io_dir / "ciphertexts_download", "Client: encrypted results")
 
         # 5. Client side: Decrypt
-        cmd = [exec_dir/"decrypt_decode", test, str(SIZE_BOUND[size])]
+        cmd = [exec_dir/"client_decrypt_decode", test, str(SIZE_BOUND[size])]
         subprocess.run(cmd, check=True)
         utils.log_step(5, "Decryption")
 
