@@ -61,7 +61,7 @@ def main() -> int:
     utils.log_step(1, "Dataset generation")
 
     # 2. Client side: Generate the keys
-    cmd = [exec_dir/"run_gen_keys", test]
+    cmd = [exec_dir/"client_key_generation", test]
     subprocess.run(cmd, check=True)
     utils.log_step(2, "Key generation")
     utils.log_size(io_dir / "public_keys", "Public and evaluation keys")

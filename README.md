@@ -134,7 +134,7 @@ Each file can take as argument the test case size.
 
 | Stage executables                | Description |
 |----------------------------------|-------------|
-| `run_gen_keys`                   | Generate all key material and cryptographic context.           
+| `client_key_generation`          | Generate all key material and cryptographic context.           
 | `client_preprocess_input`        | (Optional) Any in the clear computations the client wants to apply over the input.
 | `encode_encrypt`                 | Plaintext encoding and encryption of the input.
 | `run_h_mul`                      | The computation the server applies to achieve the workload solution over encrypted data.
