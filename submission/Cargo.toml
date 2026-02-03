@@ -13,6 +13,9 @@ rand = { version = "0.9.1" }
 name = "client_key_generation"
 
 [[bin]]
+name = "client_preprocess_input"
+
+[[bin]]
 name = "client_encode_encrypt_input"
 
 [[bin]]
@@ -20,3 +23,6 @@ name = "server_encrypted_compute"
 
 [[bin]]
 name = "client_decrypt_decode"
+
+[[bin]]
+name = "client_postprocess"

@@ -60,19 +60,24 @@ def main() -> int:
     subprocess.run(cmd, check=True)
     utils.log_step(1, "Dataset generation")
 
-    # 2. Client side: Generate the keys
+    # 2 Client side: Generate the keys
     cmd = [exec_dir/"client_key_generation", test]
     subprocess.run(cmd, check=True)
-    utils.log_step(2, "Key generation")
+    utils.log_step(2, "Client: Key Generation")
     utils.log_size(io_dir / "public_keys", "Public and evaluation keys")
+    
+    # 3.1 Client side: Preprocess
+    cmd = [exec_dir/"client_preprocess_input", test]
+    subprocess.run(cmd, check=True)
+    utils.log_step(3.1, "Client: Input preprocessing")
 
-    # 3. Client side: Encode and encrypt the dataset
+    # 3.2 Client side: Encode and encrypt the dataset
     cmd = [exec_dir/"client_encode_encrypt_input", test]
     subprocess.run(cmd, check=True)
-    utils.log_step(3, "Encryption")
+    utils.log_step(3.2, "Client: Encryption")
     utils.log_size(io_dir / "ciphertexts_upload", "Client: encrypted inputs")
 
-    # Run steps 4-7 multiple times if requested
+    # Run steps 4-6 multiple times if requested
     for run in range(num_runs):
         run_path = params.measuredir() / f"results-{run+1}.json"
         if num_runs > 1:
@@ -81,21 +86,26 @@ def main() -> int:
         # 4. Server side: Run the encrypted processing
         cmd = [exec_dir/"server_encrypted_compute", test, str(SIZE_BOUND[size])]
         subprocess.run(cmd, check=True)
-        utils.log_step(4, "Homomorphic mul")
+        utils.log_step(4, "Server: Homomorphic mul")
         utils.log_size(io_dir / "ciphertexts_download", "Client: encrypted results")
 
         # 5. Client side: Decrypt
         cmd = [exec_dir/"client_decrypt_decode", test, str(SIZE_BOUND[size])]
         subprocess.run(cmd, check=True)
-        utils.log_step(5, "Decryption")
+        utils.log_step(5, "Client: Result decryption")
+        
+        # 6. Client side: Postprocess
+        cmd = [exec_dir/"client_postprocess", test, str(SIZE_BOUND[size])]
+        subprocess.run(cmd, check=True)
+        utils.log_step(6, "Client: Result postprocessing")
 
-        # 6. Harness: Check the results
+        # 7. Harness: Check the results
         expected = numpy.loadtxt("datasets/" + test + "/expected.txt")
         out = numpy.loadtxt("io/" + test + "/cleartext_output/out.txt")
         assert (expected == out).all()
-        utils.log_step(6, "Checking results")
+        utils.log_step(7, "Checking results")
 
-        # 7. Store measurements
+        # 8. Store measurements
         run_path = params.measuredir() / "results.json"
         run_path.parent.mkdir(parents=True, exist_ok=True)
         utils.save_run(run_path)
