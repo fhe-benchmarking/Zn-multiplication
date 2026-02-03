@@ -57,71 +57,36 @@ options:
 
 The single instance runs the multiplication for a single pair of inputs and verifies the correctness of the result.
 
-***
-
 ```console
 $ python3 ./harness/run_submission.py 0 --seed 3 --num_runs 2
- 
 
-[harness] Running submission for single inference
-[get-openfhe] Found OpenFHE at .../ml-inference/third_party/openfhe (use --force to rebuild).
--- FOUND PACKAGE OpenFHE
--- OpenFHE Version: 1.3.1
--- OpenFHE installed as shared libraries: ON
--- OpenFHE include files location: .../ml-inference/third_party/openfhe/include/openfhe
--- OpenFHE lib files location: .../ml-inference/third_party/openfhe/lib
--- OpenFHE Native Backend size: 64
--- Configuring done (0.0s)
--- Generating done (0.0s)
--- Build files have been written to: .../ml-inference/submission/build
-[ 12%] Built target client_preprocess_input
-[ 25%] Built target client_postprocess
-[ 37%] Built target server_preprocess_model
-[ 62%] Built target client_key_generation
-[ 62%] Built target mlp_encryption_utils
-[ 75%] Built target client_encode_encrypt_input
-[100%] Built target client_decrypt_decode
-[100%] Built target server_encrypted_compute
-22:50:49 [harness] 1: Harness: MNIST Test dataset generation completed (elapsed: 7.5552s)
-22:50:51 [harness] 2: Client: Key Generation completed (elapsed: 2.2688s)
-         [harness] Client: Public and evaluation keys size: 1.4G
-22:50:51 [harness] 3: Server: (Encrypted) model preprocessing completed (elapsed: 0.1603s)
+[harness] Running submission for single dataset
+Build the submission executable...
+Rust toolchain already installed.
+   Compiling zn_multiplication v0.1.0 (/media/florent/Optalysys/Zn-multiplication/submission)
+    Finished `release` profile [optimized] target(s) in 0.61s
+Executable built
+08:58:21 [harness] 1: Dataset generation completed (elapsed: 0.1762s)
+08:58:22 [harness] 2: Key generation completed (elapsed: 0.8709s)
+         [harness] Public and evaluation keys size: 125.0M
+08:58:22 [harness] 3: Encryption completed (elapsed: 0.0094s)
+         [harness] Client: encrypted inputs size: 1.0M
 
          [harness] Run 1 of 2
-100.0%
-100.0%
-100.0%
-100.0%
-22:51:04 [harness] 4: Harness: Input generation for MNIST completed (elapsed: 13.1305s)
-22:51:04 [harness] 5: Client: Input preprocessing completed (elapsed: 0.0489s)
-22:51:04 [harness] 6: Client: Input encryption completed (elapsed: 0.0481s)
-         [harness] Client: Encrypted input size: 358.8K
-         [server] Loading keys
-         [server] Run encrypted MNIST inference
-         [server] Execution time for ciphertext 0 : 11 seconds
-22:51:18 [harness] 7: Server: Encrypted ML Inference computation completed (elapsed: 13.3027s)
-         [harness] Client: Encrypted results size: 69.6K
-22:51:18 [harness] 8: Client: Result decryption completed (elapsed: 0.1729s)
-22:51:18 [harness] 9: Client: Result postprocessing completed (elapsed: 0.0921s)
-[harness] PASS  (expected=7, got=7)
-[total latency] 36.7796s
+08:58:28 [harness] 4: Homomorphic mul completed (elapsed: 6.7748s)
+         [harness] Client: encrypted results size: 514.4K
+08:58:28 [harness] 5: Decryption completed (elapsed: 0.0087s)
+08:58:28 [harness] 6: Checking results completed (elapsed: 0.0038s)
+[total latency] 7.8438s
 
          [harness] Run 2 of 2
-22:51:23 [harness] 4: Harness: Input generation for MNIST completed (elapsed: 5.2028s)
-22:51:23 [harness] 5: Client: Input preprocessing completed (elapsed: 0.0986s)
-22:51:23 [harness] 6: Client: Input encryption completed (elapsed: 0.0998s)
-         [harness] Client: Encrypted input size: 358.8K
-         [server] Loading keys
-         [server] Run encrypted MNIST inference
-         [server] Execution time for ciphertext 0 : 12 seconds
-22:51:37 [harness] 7: Server: Encrypted ML Inference computation completed (elapsed: 13.8138s)
-         [harness] Client: Encrypted results size: 69.6K
-22:51:37 [harness] 8: Client: Result decryption completed (elapsed: 0.1219s)
-22:51:37 [harness] 9: Client: Result postprocessing completed (elapsed: 0.0827s)
-[harness] PASS  (expected=7, got=7)
-[total latency] 29.4041s
+08:58:35 [harness] 4: Homomorphic mul completed (elapsed: 6.8825s)
+         [harness] Client: encrypted results size: 514.4K
+08:58:35 [harness] 5: Decryption completed (elapsed: 0.0075s)
+08:58:35 [harness] 6: Checking results completed (elapsed: 0.0006s)
+[total latency] 7.9471s
 
-All steps completed for the single inference!
+All steps completed for the single dataset!
 ```
 
 After finishing the run, deactivate the virtual environment.
@@ -136,10 +101,11 @@ The directory structure of this reposiroty is as follows:
 ├─ README.md     # This file
 ├─ LICENSE.md    # Harness software license (Apache v2)
 ├─ harness/      # Scripts to drive the workload implementation
+|   ├─ generate_dataset.py
+|   ├─ params.py
 |   ├─ run_submission.py
-|   ├─ verify_result.py
-|   ├─ calculate_quality.py
-|   └─ [...]
+|   ├─ utils.py
+|   └─ [,,,]
 ├─ datasets/     # The harness scripts create and populate this directory
 ├─ docs/         # Optional: additional documentation
 ├─ io/           # This directory is used for client<->server communication
@@ -149,13 +115,13 @@ The directory structure of this reposiroty is as follows:
     ├─ README.md   # Submission documentation (mandatory)
     ├─ LICENSE.md  # Optional software license (if different from Apache v2)
     └─ [...]
-└─ submission_remote/  # This is where the remote-backend workload implementation lives
-    └─ [...]
 ```
 Submitters must overwrite the contents of the `scripts` and `submissions`
 subdirectories.
 
 ## Description of stages
+
+***
 
 A submitter can edit any of the `client_*` / `server_*` sources in `/submission`. 
 Moreover, for the particular parameters related to a workload, the submitter can modify the params files.
