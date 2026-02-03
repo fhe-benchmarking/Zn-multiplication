@@ -134,14 +134,12 @@ Each file can take as argument the test case size.
 
 | Stage executables                | Description |
 |----------------------------------|-------------|
-| `server_get_params`              | (Optional) Get cryptographic context from a remote server.
 | `run_gen_keys`                   | Generate all key material and cryptographic context.           
-| `server_upload_ek`               | (Optional) Upload evaluation key to a remote backend.
-| `client_preprocess_dataset`      | (Optional) Any in the clear computations the client wants to apply over the dataset.
 | `client_preprocess_input`        | (Optional) Any in the clear computations the client wants to apply over the input.
 | `encode_encrypt`                 | Plaintext encoding and encryption of the input.
 | `run_h_mul`                      | The computation the server applies to achieve the workload solution over encrypted data.
 | `decrypt_decode`                 | Decryption and plaintext decoding of the result at the client.
+| `client_postprocess`             | Any in the clear computation that the client wants to apply on the decrypted result.
 
 
 The outer python script measures the runtime of each stage.
