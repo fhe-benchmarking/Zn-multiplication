@@ -5,6 +5,7 @@
 // See the LICENSE.md file for details.
 
 use std::env;
+use std::path::Path;
 use std::fs;
 
 use tfhe::{ FheUint64, set_server_key, ServerKey };
@@ -26,15 +27,16 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     let serialised_data = fs::read(io_dir.clone() + "/public_keys/pk.bin")?;
     let server_key: ServerKey = bincode::deserialize(&serialised_data)?;
     set_server_key(server_key);
-    
+ 
     // Load the LHS input ciphers
+    let ciphertexts_in_dir = io_dir.clone() + "/ciphertexts_upload";
     let ciphers_lhs = (0 .. data_size).map(|i|
-        bincode::deserialize::<FheUint64>(&fs::read(io_dir.clone() + "/ciphertexts_upload/cipher_lhs_" + &i.to_string() + ".bin")?)
+        bincode::deserialize::<FheUint64>(&fs::read(ciphertexts_in_dir.clone() + "/cipher_lhs_" + &i.to_string() + ".bin")?)
     ).collect::<Result<Vec<FheUint64>, Box<bincode::ErrorKind>>>()?;
     
     // Load the RHS input ciphers
     let ciphers_rhs = (0 .. data_size).map(|i|
-        bincode::deserialize::<FheUint64>(&fs::read(io_dir.clone() + "/ciphertexts_upload/cipher_rhs_" + &i.to_string() + ".bin")?)
+        bincode::deserialize::<FheUint64>(&fs::read(ciphertexts_in_dir.clone() + "/cipher_rhs_" + &i.to_string() + ".bin")?)
     ).collect::<Result<Vec<FheUint64>, Box<bincode::ErrorKind>>>()?;
 
     // Run the homomorphic multiplications
@@ -43,9 +45,12 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
                                  .collect::<Vec<FheUint64>>();
 
     // Write the results
-    fs::create_dir(io_dir.clone() + "/ciphertexts_download")?;
+    let ciphertexts_out_dir = io_dir.clone() + "/ciphertexts_download";
+    if !Path::new(&ciphertexts_out_dir).exists() {
+        fs::create_dir(&ciphertexts_out_dir)?;
+    }
     for (i, cipher) in ciphers_out.iter().enumerate() {
-        fs::write(io_dir.clone() + "/ciphertexts_download/cipher_out_" + &i.to_string() + ".bin", &bincode::serialize(&cipher)?)?
+        fs::write(ciphertexts_out_dir.clone() + "/cipher_out_" + &i.to_string() + ".bin", &bincode::serialize(&cipher)?)?
     }
 
     Ok(())
