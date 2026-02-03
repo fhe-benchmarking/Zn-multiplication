@@ -121,31 +121,27 @@ subdirectories.
 
 ## Description of stages
 
-***
-
-A submitter can edit any of the `client_*` / `server_*` sources in `/submission`. 
-Moreover, for the particular parameters related to a workload, the submitter can modify the params files.
-If the current description of the files are inaccurate, the stage names in `run_submission` can be also 
+A submitter can edit any of the files in `/submission`. 
+Moreover, for the particular parameters related to a workload, the submitter can modify the `harness/params.py` files.
+If the current description of the files are inaccurate, the stage names in `harness/run_submission.py` can be also 
 modified.
 
-The current stages are the following, targeted to a client-server scenario.
-The order in which they are happening in `run_submission` assumes an initialization step which is 
-database-dependent and run only once, and potentially multiple runs for multiple queries.
+The order in which they are happening in `run_submission` assumes an initialization step which run only once, and potentially multiple runs for the multiplication.
 Each file can take as argument the test case size.
+
+***
 
 
 | Stage executables                | Description |
 |----------------------------------|-------------|
 | `server_get_params`              | (Optional) Get cryptographic context from a remote server.
-| `client_key_generation`          | Generate all key material and cryptographic context at the client.           
+| `run_gen_keys`                   | Generate all key material and cryptographic context.           
 | `server_upload_ek`               | (Optional) Upload evaluation key to a remote backend.
-| `client_preprocess_dataset`      | (Optional) Any in the clear computations the client wants to apply over the dataset/model.
+| `client_preprocess_dataset`      | (Optional) Any in the clear computations the client wants to apply over the dataset.
 | `client_preprocess_input`        | (Optional) Any in the clear computations the client wants to apply over the input.
-| `client_encode_encrypt_query`    | Plaintext encoding and encryption of the input at the client.
-| `server_preprocess_model`        | (Optional) Any in the clear or encrypted computations the server wants to apply over the model.
-| `server_encrypted_compute`       | The computation the server applies to achieve the workload solution over encrypted data.
-| `client_decrypt_decode`          | Decryption and plaintext decoding of the result at the client.
-| `client_postprocess`             | Any in the clear computation that the client wants to apply on the decrypted result.
+| `encode_encrypt`                 | Plaintext encoding and encryption of the input.
+| `run_h_mul`                      | The computation the server applies to achieve the workload solution over encrypted data.
+| `decrypt_decode`                 | Decryption and plaintext decoding of the result at the client.
 
 
 The outer python script measures the runtime of each stage.
