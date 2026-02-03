@@ -16,7 +16,7 @@ name = "client_key_generation"
 name = "client_encode_encrypt_input"
 
 [[bin]]
-name = "run_h_mul"
+name = "server_encrypted_compute"
 
 [[bin]]
 name = "decrypt_decode"

@@ -79,7 +79,7 @@ def main() -> int:
             print(f"\n         [harness] Run {run+1} of {num_runs}")
     
         # 4. Server side: Run the encrypted processing
-        cmd = [exec_dir/"run_h_mul", test, str(SIZE_BOUND[size])]
+        cmd = [exec_dir/"server_encrypted_compute", test, str(SIZE_BOUND[size])]
         subprocess.run(cmd, check=True)
         utils.log_step(4, "Homomorphic mul")
         utils.log_size(io_dir / "ciphertexts_download", "Client: encrypted results")
