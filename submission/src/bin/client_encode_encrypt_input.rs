@@ -5,6 +5,7 @@
 // See the LICENSE.md file for details.
 
 use std::env;
+use std::path::Path;
 use std::fs;
 
 use tfhe::{ClientKey, FheUint64};
@@ -27,16 +28,19 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     let lwe_sk: ClientKey = bincode::deserialize(&serialised_data)?;
 
     // Load the input data (LHS and RHS)
-    let lhs_cleartext: Vec<u64> = read_numbers_from_file(&Path::new(&("datasets/".to_owned() + &size + "/lhs.txt")))?;
-    let rhs_cleartext: Vec<u64> = read_numbers_from_file(&Path::new(&("datasets/".to_owned() + &size + "/rhs.txt")))?;
+    let lhs_cleartext: Vec<u64> = read_numbers_from_file(Path::new(&("datasets/".to_owned() + &size + "/lhs.txt")))?;
+    let rhs_cleartext: Vec<u64> = read_numbers_from_file(Path::new(&("datasets/".to_owned() + &size + "/rhs.txt")))?;
     
     // Encode and encrypt the LHS
     let lhs_ciphers = lhs_cleartext.into_iter().map(|m| FheUint64::encrypt(m, &lwe_sk));
  
     // Write the LHS
-    fs::create_dir(io_dir.clone() + "/ciphertexts_upload")?;
+    let ciphertexts_dir = io_dir.clone() + "/ciphertexts_upload";
+    if !Path::new(&ciphertexts_dir).exists() {
+        fs::create_dir(&ciphertexts_dir)?;
+    }
     for (i, cipher) in lhs_ciphers.enumerate() {
-        fs::write(io_dir.clone() + "/ciphertexts_upload/cipher_lhs_" + &i.to_string() + ".bin", &bincode::serialize(&cipher)?)?
+        fs::write(ciphertexts_dir.clone() + "/cipher_lhs_" + &i.to_string() + ".bin", &bincode::serialize(&cipher)?)?
     }
     
     // Encode and encrypt the RHS
@@ -44,7 +48,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Write the RHS
     for (i, cipher) in rhs_ciphers.enumerate() {
-        fs::write(io_dir.clone() + "/ciphertexts_upload/cipher_rhs_" + &i.to_string() + ".bin", &bincode::serialize(&cipher)?)?
+        fs::write(ciphertexts_dir.clone() + "/cipher_rhs_" + &i.to_string() + ".bin", &bincode::serialize(&cipher)?)?
     }
 
     Ok(())

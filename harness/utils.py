@@ -79,7 +79,7 @@ def build_submission(script_dir: Path):
     """
     Build the submission, including pulling dependencies as neeed
     """
-    subprocess.run([str(script_dir) + "/build_task_" + SUBMISSION_NAME + ".sh"], check=True)
+    subprocess.run([str(script_dir) + "/build_task.sh"], check=True)
 
 def log_step(step_num: int, step_name: str, start: bool = False):
     """ 

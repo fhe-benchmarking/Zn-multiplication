@@ -14,7 +14,7 @@ pub fn read_numbers_from_file(filepath: &Path) -> io::Result<Vec<u64>> {
     let reader = BufReader::new(file);
 
     reader.lines()
-        .filter_map(|line| line.ok())
+        .map_while(Result::ok)
         .map(|line| line.trim().to_owned())
         .filter(|line| !line.is_empty())
         .map(|line| line.parse::<u64>())

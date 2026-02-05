@@ -5,6 +5,7 @@
 // See the LICENSE.md file for details.
 
 use std::env;
+use std::path::Path;
 use std::fs;
 
 use tfhe::{ClientKey, FheUint64};
@@ -37,8 +38,11 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     let results = ciphers_out.iter().map(|c| c.decrypt(&lwe_sk)).collect::<Vec<u64>>();
 
     // Write the results
-    fs::create_dir(io_dir.clone() + "/cleartext_output")?;
-    write_numbers_to_file(&Path::new(&(io_dir.clone() + "/cleartext_output/out.txt")), &results)?;
+    let cleartext_output_dir = io_dir.clone() + "/cleartext_output";
+    if !Path::new(&cleartext_output_dir).exists() {
+        fs::create_dir(cleartext_output_dir.clone())?;
+    }
+    write_numbers_to_file(Path::new(&(cleartext_output_dir.clone() + "/out.txt")), &results)?;
 
     Ok(())
 }

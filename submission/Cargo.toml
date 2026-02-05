@@ -10,13 +10,19 @@ tfhe = { version = "~1.1.3", features = ["integer"] }
 rand = { version = "0.9.1" }
 
 [[bin]]
-name = "run_gen_keys"
+name = "client_key_generation"
 
 [[bin]]
-name = "encode_encrypt"
+name = "client_preprocess_input"
 
 [[bin]]
-name = "run_h_mul"
+name = "client_encode_encrypt_input"
 
 [[bin]]
-name = "decrypt_decode"
+name = "server_encrypted_compute"
+
+[[bin]]
+name = "client_decrypt_decode"
+
+[[bin]]
+name = "client_postprocess"
