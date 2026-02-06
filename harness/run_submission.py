@@ -106,7 +106,7 @@ def main() -> int:
         utils.log_step(7, "Checking results")
 
         # 8. Store measurements
-        run_path = params.measuredir() / "results.json"
+        run_path = params.measuredir() / f"results-{run+1}.json"
         run_path.parent.mkdir(parents=True, exist_ok=True)
         utils.save_run(run_path)
 

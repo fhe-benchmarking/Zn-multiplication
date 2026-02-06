@@ -27,15 +27,15 @@ def main():
     if seed is not None:
         numpy.random.seed(seed)
     lhs = numpy.random.randint(2**64, size=params.size_bound, dtype=numpy.uint64)
-    numpy.savetxt(DATASET_LHS_PATH, lhs, fmt='%d')
+    numpy.savetxt(DATASET_LHS_PATH, lhs, fmt='%u')
     rhs = numpy.random.randint(2**64, size=params.size_bound, dtype=numpy.uint64)
-    numpy.savetxt(DATASET_RHS_PATH, rhs, fmt='%d')
+    numpy.savetxt(DATASET_RHS_PATH, rhs, fmt='%u')
 
     # 2) compute reference result
     result = lhs * rhs
 
     # 3) write to expected.txt (overwrites if it already exists)
-    numpy.savetxt(OUT_PATH, result, fmt='%d')
+    numpy.savetxt(OUT_PATH, result, fmt='%u')
 
 if __name__ == "__main__":
     main()
