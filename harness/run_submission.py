@@ -51,7 +51,7 @@ def main() -> int:
     utils.log_step(0, "Init", True)
 
     # 1. Client-side: Generate the datasets
-    cmd = ["python3", harness_dir/"generate_dataset.py", data_size]
+    cmd = ["python3", harness_dir/"generate_dataset.py", str(size)]
     if seed is not None:
         rng = np.random.default_rng(seed)
         gendata_seed = rng.integers(0,0x7fffffff)
