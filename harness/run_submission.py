@@ -10,7 +10,6 @@
 run_submission.py - run the entire submission process, from build to verify
 """
 
-import numpy
 import subprocess
 import utils
 from params import instance_name, SIZE_BOUND
@@ -99,11 +98,11 @@ def main() -> int:
         subprocess.run(cmd, check=True)
         utils.log_step(6, "Client: Result postprocessing")
 
-        # 7. Harness: Check the results
-        expected = numpy.loadtxt("datasets/" + test + "/expected.txt")
-        out = numpy.loadtxt("io/" + test + "/cleartext_output/out.txt")
-        assert (expected == out).all()
-        utils.log_step(7, "Checking results")
+        # 7. Harness: Verify the results
+        expected_file = "datasets/" + test + "/expected.txt"
+        result_file = "io/" + test + "/cleartext_output/out.txt"
+        subprocess.run(["python3", harness_dir/"verify_result.py",
+               str(expected_file), str(result_file)], check=False)
 
         # 8. Store measurements
         run_path = params.measuredir() / f"results-{run+1}.json"
