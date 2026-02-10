@@ -11,16 +11,17 @@ run_submission.py - run the entire submission process, from build to verify
 """
 
 import subprocess
+import sys
+import numpy as np
 import utils
 from params import instance_name, SIZE_BOUND
-from sys import platform
 
 def main() -> int:
     """
     Run the entire submission process, from build to verify
     """
 
-    if not platform.startswith('linux'):
+    if not sys.platform.startswith('linux'):
         print(f"It appears you're running on {platform}; only linux is supported")
         return 1
 
@@ -28,15 +29,14 @@ def main() -> int:
     # Get the arguments
     size, params, seed, num_runs, clrtxt = utils.parse_submission_arguments('Run the 64-bits mul FHE benchmark.')
     test = instance_name(size)
+    data_size = str(SIZE_BOUND[size])
     print(f"\n[harness] Running submission for {test} dataset")
 
     # Ensure the required directories exist
     utils.ensure_directories(params.rootdir)
 
     # Build the submission if needed
-    print("Build the submission executable...")
     utils.build_submission(params.rootdir/"scripts")
-    print("Executable built")
 
     # The harness scripts are in the 'harness' directory,
     # the executables are in the directory submission/target/release
@@ -50,61 +50,58 @@ def main() -> int:
     io_dir.mkdir(parents=True)
     utils.log_step(0, "Init", True)
 
-    # 1. Harness: Generate the datasets
-    cmd = ["python3", harness_dir/"generate_dataset.py", str(size)]
+    # 1. Client-side: Generate the datasets
+    cmd = ["python3", harness_dir/"generate_dataset.py", data_size]
     if seed is not None:
-        cmd.extend(["--seed", str(seed)])
-    if clrtxt is not None:
-        cmd.extend(["--clrtxt", str(clrtxt)])
+        rng = np.random.default_rng(seed)
+        gendata_seed = rng.integers(0,0x7fffffff)
+        cmd.extend(["--seed", str(gendata_seed)])
     subprocess.run(cmd, check=True)
     utils.log_step(1, "Dataset generation")
 
-    # 2 Client side: Generate the keys
-    cmd = [exec_dir/"client_key_generation", test]
-    subprocess.run(cmd, check=True)
-    utils.log_step(2, "Client: Key Generation")
+    # 2. Client-side: Preprocess the dataset using exec_dir/client_preprocess_dataset
+    subprocess.run([exec_dir/"client_preprocess_input", data_size], check=True)
+    utils.log_step(2, "Input preprocessing")
+
+    # 3. Client-side: Generate the cryptographic keys 
+    # Note: this does not use the rng seed above, it lets the implementation
+    #   handle its own prg needs. It means that even if called with the same
+    #   seed multiple times, the keys and ciphertexts will still be different.
+    subprocess.run([exec_dir/"client_key_generation", test], check=True)
+    utils.log_step(3, "Key Generation")
     utils.log_size(io_dir / "public_keys", "Public and evaluation keys")
     
-    # 3.1 Client side: Preprocess
-    cmd = [exec_dir/"client_preprocess_input", test]
-    subprocess.run(cmd, check=True)
-    utils.log_step(3.1, "Client: Input preprocessing")
-
-    # 3.2 Client side: Encode and encrypt the dataset
-    cmd = [exec_dir/"client_encode_encrypt_input", test]
-    subprocess.run(cmd, check=True)
-    utils.log_step(3.2, "Client: Encryption")
+    # 4. Client-side: Encode and encrypt the dataset
+    subprocess.run([exec_dir/"client_encode_encrypt_input", test], check=True)
+    utils.log_step(4, "Input encoding and encryption")
     utils.log_size(io_dir / "ciphertexts_upload", "Client: encrypted inputs")
 
-    # Run steps 4-6 multiple times if requested
+    # Run steps 7-9 multiple times if requested
     for run in range(num_runs):
         run_path = params.measuredir() / f"results-{run+1}.json"
         if num_runs > 1:
             print(f"\n         [harness] Run {run+1} of {num_runs}")
     
-        # 4. Server side: Run the encrypted processing
-        cmd = [exec_dir/"server_encrypted_compute", test, str(SIZE_BOUND[size])]
-        subprocess.run(cmd, check=True)
-        utils.log_step(4, "Server: Homomorphic mul")
+        # 5. Server side: Run the encrypted processing
+        subprocess.run([exec_dir/"server_encrypted_compute", test, data_size], check=True)
+        utils.log_step(5, "Server: Homomorphic mul")
         utils.log_size(io_dir / "ciphertexts_download", "Client: encrypted results")
 
-        # 5. Client side: Decrypt
-        cmd = [exec_dir/"client_decrypt_decode", test, str(SIZE_BOUND[size])]
-        subprocess.run(cmd, check=True)
-        utils.log_step(5, "Client: Result decryption")
+        # 6. Client side: Decrypt
+        subprocess.run([exec_dir/"client_decrypt_decode", test, data_size], check=True)
+        utils.log_step(6, "Client: Result decryption")
         
-        # 6. Client side: Postprocess
-        cmd = [exec_dir/"client_postprocess", test, str(SIZE_BOUND[size])]
-        subprocess.run(cmd, check=True)
-        utils.log_step(6, "Client: Result postprocessing")
+        # 7. Client side: Postprocess
+        subprocess.run([exec_dir/"client_postprocess", test, data_size], check=True)
+        utils.log_step(7, "Client: Result postprocessing")
 
-        # 7. Harness: Verify the results
-        expected_file = "datasets/" + test + "/expected.txt"
-        result_file = "io/" + test + "/cleartext_output/out.txt"
+        # 8. Harness: Verify the results
+        expected_file = params.datadir() / "expected.txt"
+        result_file = io_dir / "cleartext_output/out.txt"
         subprocess.run(["python3", harness_dir/"verify_result.py",
                str(expected_file), str(result_file)], check=False)
 
-        # 8. Store measurements
+        # 9. Store measurements
         run_path = params.measuredir() / f"results-{run+1}.json"
         run_path.parent.mkdir(parents=True, exist_ok=True)
         utils.save_run(run_path)
