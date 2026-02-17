@@ -29,8 +29,8 @@ To run the workload, clone and install dependencies:
 git clone https://github.com/fhe-benchmarking/Zn-multiplication.git
 cd Zn-multiplication
 
-python -m venv zn_mul_env
-source ./zn_mul_env/bin/activate
+python -m venv virtualenv
+source ./virtualenv/bin/activate
 pip install -r requirements.txt
 
 python3 harness/run_submission.py -h  # Information about command-line options

@@ -1,6 +1,5 @@
 # Build artefacts
 datasets
-measurements
 io
 harness/__pycache__
 submission/Cargo.lock
