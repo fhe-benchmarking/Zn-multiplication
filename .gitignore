@@ -6,4 +6,4 @@ submission/Cargo.lock
 submission/target
 
 # Virtual environments
-bmenv
+virtualenv
