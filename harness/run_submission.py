@@ -57,7 +57,7 @@ def main() -> int:
         gendata_seed = rng.integers(0,0x7fffffff)
         cmd.extend(["--seed", str(gendata_seed)])
     subprocess.run(cmd, check=True)
-    utils.log_step(1, "Dataset generation")
+    utils.log_step(1, "Input generation")
 
     # 2. Client-side: Preprocess the dataset using exec_dir/client_preprocess_dataset
     subprocess.run([exec_dir/"client_preprocess_input", data_size], check=True)
@@ -74,7 +74,7 @@ def main() -> int:
     # 4. Client-side: Encode and encrypt the dataset
     subprocess.run([exec_dir/"client_encode_encrypt_input", test], check=True)
     utils.log_step(4, "Input encoding and encryption")
-    utils.log_size(io_dir / "ciphertexts_upload", "Client: encrypted inputs")
+    utils.log_size(io_dir / "ciphertexts_upload", "Encrypted input")
 
     # Run steps 7-9 multiple times if requested
     for run in range(num_runs):
@@ -84,16 +84,16 @@ def main() -> int:
     
         # 5. Server side: Run the encrypted processing
         subprocess.run([exec_dir/"server_encrypted_compute", test, data_size], check=True)
-        utils.log_step(5, "Server: Homomorphic mul")
-        utils.log_size(io_dir / "ciphertexts_download", "Client: encrypted results")
+        utils.log_step(5, "Encrypted computation")
+        utils.log_size(io_dir / "ciphertexts_download", "Encrypted results")
 
         # 6. Client side: Decrypt
         subprocess.run([exec_dir/"client_decrypt_decode", test, data_size], check=True)
-        utils.log_step(6, "Client: Result decryption")
+        utils.log_step(6, "Result decryption")
         
         # 7. Client side: Postprocess
         subprocess.run([exec_dir/"client_postprocess", test, data_size], check=True)
-        utils.log_step(7, "Client: Result postprocessing")
+        utils.log_step(7, "Result postprocessing")
 
         # 8. Harness: Verify the results
         expected_file = params.datadir() / "expected.txt"

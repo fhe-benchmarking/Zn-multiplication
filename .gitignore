@@ -1,10 +1,9 @@
 # Build artefacts
 datasets
-measurements
 io
 harness/__pycache__
 submission/Cargo.lock
 submission/target
 
 # Virtual environments
-bmenv
+virtualenv
