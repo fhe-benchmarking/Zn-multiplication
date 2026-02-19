@@ -73,7 +73,7 @@ def main() -> int:
     
     # 4. Client-side: Encode and encrypt the dataset
     subprocess.run([exec_dir/"client_encode_encrypt_input", test], check=True)
-    utils.log_step(4, "Input encoding and encryption")
+    utils.log_step(4, "Input encryption")
     utils.log_size(io_dir / "ciphertexts_upload", "Encrypted input")
 
     # Run steps 7-9 multiple times if requested
