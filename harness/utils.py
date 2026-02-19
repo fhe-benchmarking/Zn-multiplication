@@ -131,10 +131,11 @@ def save_run(path: Path):
     global _timestampsStr
     global _bandwidth
 
+    _timestampsStr["Total"] = f"{round(sum(_timestamps.values()), 4)}s"
+    
     json.dump({
-        "total_latency_s": round(sum(_timestamps.values()), 4),
-        "per_stage": _timestampsStr,
-        "bandwidth": _bandwidth,
+        "Timing": _timestampsStr,
+        "Bandwidth": _bandwidth,
     }, open(path,"w"), indent=2)
 
     print("[total latency]", f"{round(sum(_timestamps.values()), 4)}s")
