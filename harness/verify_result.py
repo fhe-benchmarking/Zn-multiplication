@@ -35,10 +35,10 @@ def main():
         sys.exit(1)
 
     if exp == res:
-        print(f"[harness] PASS  (expected={exp}, got={res})")
+        print(f"[harness] PASS")
         sys.exit(0)
     else:
-        print(f"[harness] FAIL  (expected={exp}, got={res})")
+        print(f"[harness] FAIL  Expected file {expected_file} and result file {result_file} do not match.")
         sys.exit(1)
 
 if __name__ == "__main__":
