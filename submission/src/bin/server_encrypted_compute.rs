@@ -8,7 +8,7 @@ use std::env;
 use std::path::Path;
 use std::fs;
 
-use tfhe::{ FheUint64, set_server_key, ServerKey };
+use tfhe::{ CompressedFheUint64, CompressedServerKey, FheUint64, set_server_key };
 
 use zn_multiplication::half_cipher_cipher_mul_64;
 
@@ -25,23 +25,24 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Load the server key
     let serialised_data = fs::read(io_dir.clone() + "/public_keys/pk.bin")?;
-    let server_key: ServerKey = bincode::deserialize(&serialised_data)?;
+    let compressed_server_key: CompressedServerKey = bincode::deserialize(&serialised_data)?;
+    let server_key = compressed_server_key.decompress();
     set_server_key(server_key);
  
     // Load the LHS input ciphers
     let ciphertexts_in_dir = io_dir.clone() + "/ciphertexts_upload";
     let ciphers_lhs = (0 .. data_size).map(|i|
-        bincode::deserialize::<FheUint64>(&fs::read(ciphertexts_in_dir.clone() + "/cipher_lhs_" + &i.to_string() + ".bin")?)
-    ).collect::<Result<Vec<FheUint64>, Box<bincode::ErrorKind>>>()?;
+        bincode::deserialize::<CompressedFheUint64>(&fs::read(ciphertexts_in_dir.clone() + "/cipher_lhs_" + &i.to_string() + ".bin")?)
+    ).collect::<Result<Vec<CompressedFheUint64>, Box<bincode::ErrorKind>>>()?;
     
     // Load the RHS input ciphers
     let ciphers_rhs = (0 .. data_size).map(|i|
-        bincode::deserialize::<FheUint64>(&fs::read(ciphertexts_in_dir.clone() + "/cipher_rhs_" + &i.to_string() + ".bin")?)
-    ).collect::<Result<Vec<FheUint64>, Box<bincode::ErrorKind>>>()?;
+        bincode::deserialize::<CompressedFheUint64>(&fs::read(ciphertexts_in_dir.clone() + "/cipher_rhs_" + &i.to_string() + ".bin")?)
+    ).collect::<Result<Vec<CompressedFheUint64>, Box<bincode::ErrorKind>>>()?;
 
     // Run the homomorphic multiplications
     let ciphers_out = ciphers_lhs.iter().zip(ciphers_rhs.iter())
-                                 .map(|(lhs, rhs)| half_cipher_cipher_mul_64(lhs, rhs))
+                                 .map(|(lhs, rhs)| half_cipher_cipher_mul_64(&lhs.decompress(), &rhs.decompress()))
                                  .collect::<Vec<FheUint64>>();
 
     // Write the results
