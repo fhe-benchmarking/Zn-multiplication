@@ -6,7 +6,7 @@
 
 use std::env;
 use std::fs;
-use tfhe::{ConfigBuilder, generate_keys};
+use tfhe::{CompressedServerKey, ConfigBuilder, generate_keys};
 
 pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = env::args().collect();
@@ -19,7 +19,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     // Generate the keys
     let config = ConfigBuilder::default().build();
-    let (client_key, server_key) = generate_keys(config);
+    let (client_key, _) = generate_keys(config);
 
     // Serialize and save the secret key
     let serialised_data = bincode::serialize(&client_key)?;
@@ -27,7 +27,8 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     fs::write(io_dir.clone() + "/private_keys/sk.bin", &serialised_data)?;
     
     // Serialize and save the public key
-    let serialised_data = bincode::serialize(&server_key)?;
+    let compressed_server_key = CompressedServerKey::new(&client_key);
+    let serialised_data = bincode::serialize(&compressed_server_key)?;
     fs::create_dir(io_dir.clone() + "/public_keys")?;
     fs::write(io_dir.clone() + "/public_keys/pk.bin", &serialised_data)?;
 

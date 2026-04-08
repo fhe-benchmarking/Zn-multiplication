@@ -8,7 +8,7 @@ use std::env;
 use std::path::Path;
 use std::fs;
 
-use tfhe::{ClientKey, FheUint64};
+use tfhe::{ClientKey, CompressedFheUint64};
 use tfhe::prelude::*;
 
 use zn_multiplication::utils::*;
@@ -32,7 +32,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     let rhs_cleartext: Vec<u64> = read_numbers_from_file(Path::new(&("datasets/".to_owned() + &size + "/rhs.txt")))?;
     
     // Encode and encrypt the LHS
-    let lhs_ciphers = lhs_cleartext.into_iter().map(|m| FheUint64::encrypt(m, &lwe_sk));
+    let lhs_ciphers = lhs_cleartext.into_iter().map(|m| CompressedFheUint64::encrypt(m, &lwe_sk));
  
     // Write the LHS
     let ciphertexts_dir = io_dir.clone() + "/ciphertexts_upload";
@@ -44,7 +44,7 @@ pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     
     // Encode and encrypt the RHS
-    let rhs_ciphers = rhs_cleartext.into_iter().map(|m| FheUint64::encrypt(m, &lwe_sk));
+    let rhs_ciphers = rhs_cleartext.into_iter().map(|m| CompressedFheUint64::encrypt(m, &lwe_sk));
 
     // Write the RHS
     for (i, cipher) in rhs_ciphers.enumerate() {
